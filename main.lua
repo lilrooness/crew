@@ -101,7 +101,8 @@ function moveRoom(person, room_id)
             ticksLeft = ticksLeft - dt
 
             if done then
-                person.room = room_id
+              person.room = room_id
+              map.rooms[room_id].isVisible = true
             end
 
             return done
@@ -148,9 +149,11 @@ function love.draw()
         love.graphics.rectangle("line", v.x, v.y, v.w, v.h)
         icon_x = (v.x + v.w / 3)
         icon_y = v.y + 3
-        love.graphics.draw(icons[v.type], icon_x, icon_y, 0, 0.05, 0.05)
-        if v.showWarning and v.warning then
+        if v.isVisible then
+          love.graphics.draw(icons[v.type], icon_x, icon_y, 0, 0.05, 0.05)
+          if v.warning then
             love.graphics.draw(icons[v.warning], icon_x, icon_y, 0, 0.05, 0.05)
+          end
         end
     end
 

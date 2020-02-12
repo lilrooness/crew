@@ -21,6 +21,8 @@ function m.randomWalk(steps)
     local ystep = 105
 
     local firstRoom = n.createRoom(xpos, ypos, xstep-5, ystep-5)
+    firstRoom.isVisible = true
+    firstRoom.warning = nil
     table.insert(m.rooms, firstRoom)
     local currentRoom = table.getn(m.rooms)
 
@@ -65,12 +67,12 @@ function n.createRoom(x, y, w, h)
         warning = "hazard"
     end
     return {
+        isVisible = false,
         x = x,
         y = y,
         w = w,
         h = h,
         type = m.room_types[math.random(#m.room_types)],
-        showWarning = true,
         warning = warning
     }
 end
