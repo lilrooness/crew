@@ -16,10 +16,10 @@ function m.randomWalk(steps)
 
     local xpos = 0
     local ypos = 0
-    
+
     local xstep = 105
     local ystep = 105
-    
+
     local firstRoom = n.createRoom(xpos, ypos, xstep-5, ystep-5)
     table.insert(m.rooms, firstRoom)
     local currentRoom = table.getn(m.rooms)
