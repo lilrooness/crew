@@ -45,11 +45,8 @@ function createPerson(name, x, y)
 end
 
 function getConnectingDoor(room1, room2)
-    print("room1 " .. room1 .. " room2 " .. room2)
     for i, v in pairs(map.doors) do
-        print(v.room1 .. " " .. v.room2)
         if (v.room1 == room1 and v.room2 == room2) or (v.room2 == room1 and v.room1 == room2) then
-            print("returning door " .. i)
             return i
         end
     end
@@ -152,6 +149,9 @@ function love.draw()
         icon_x = (v.x + v.w / 3)
         icon_y = v.y + 3
         love.graphics.draw(icons[v.type], icon_x, icon_y, 0, 0.05, 0.05)
+        if v.showWarning and v.warning then
+            love.graphics.draw(icons[v.warning], icon_x, icon_y, 0, 0.05, 0.05)
+        end
     end
 
     -- map.DOORS
