@@ -43,7 +43,8 @@ function m.randomWalk(steps)
 		end
 
 
-		if taken[xpos..""..ypos] == nil then
+		if taken[xpos..":"..ypos] == nil then
+			print("creating room")
 			local room = n.createRoom(xpos, ypos, xstep-5, ystep-5)
 			table.insert(m.rooms, room)
 			newRoom = table.getn(m.rooms)
@@ -52,7 +53,8 @@ function m.randomWalk(steps)
 			currentRoom = newRoom
 
 		else
-			currentRoom = taken[xpos..""..ypos]
+			print("not creating room ...")
+			currentRoom = taken[xpos..":"..ypos]
 		end
 	end
 
