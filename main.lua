@@ -1,6 +1,13 @@
 radio = require "radio"
 map = require "map"
 
+keys = {
+  w = false,
+  a = false,
+  s = false,
+  d = false
+}
+
 updateStep = 1000 / 60
 time = 0
 
@@ -10,6 +17,9 @@ textbox = {
     w = 500,
     h = 5 * 15
 }
+
+local camera_x = 0
+local camera_y = 0
 
 lines_collection = {}
 
@@ -133,22 +143,13 @@ function speak(name, text)
 end
 
 function love.draw()
-    -- TEXTBOX
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.rectangle("line", textbox.x, textbox.y, textbox.w, textbox.h)
-
-    -- CHAT
-    love.graphics.setColor(1, 1, 1)
-    for i, v in pairs(sentences) do
-        love.graphics.print(v, textbox.x, textbox.y + ((i - 1) * 15))
-    end
 
     -- ROOMS
     love.graphics.setColor(1, 1, 1)
     for i, v in pairs(map.rooms) do
-        love.graphics.rectangle("line", v.x, v.y, v.w, v.h)
-        icon_x = (v.x + v.w / 3)
-        icon_y = v.y + 3
+        love.graphics.rectangle("line", v.x-camera_x, v.y-camera_y, v.w, v.h)
+        icon_x = (v.x + v.w / 3) - camera_x
+        icon_y = v.y + 3 - camera_y
         if v.isVisible then
           love.graphics.draw(icons[v.type], icon_x, icon_y, 0, 0.05, 0.05)
           if v.warning then
@@ -167,13 +168,15 @@ function love.draw()
         if v.isOpen then
             mode = "line"
         end
-        love.graphics.rectangle(mode, x, y, 10, 10)
+        love.graphics.rectangle(mode, x-camera_x, y-camera_y, 10, 10)
     end
 
     -- PEOPLE
     love.graphics.setColor(1, 1, 1)
     for i, v in pairs(people) do
-        love.graphics.rectangle("fill", map.rooms[people[i].room].x, map.rooms[people[i].room].y, 10, 10)
+      local x = map.rooms[people[i].room].x
+      local y = map.rooms[people[i].room].y
+        love.graphics.rectangle("fill", x-camera_x, y-camera_y, 10, 10)
     end
 
     -- UI
@@ -182,15 +185,48 @@ function love.draw()
         love.graphics.draw(icons.person, 600, 50 * i, 0, 0.06, 0.06)
         love.graphics.print("[" .. i .. "] - " .. v.name, 630, 50 * i)
     end
+
+    -- TEXTBOX
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.rectangle("line", textbox.x, textbox.y, textbox.w, textbox.h)
+
+    -- CHAT
+    love.graphics.setColor(1, 1, 1)
+    for i, v in pairs(sentences) do
+      love.graphics.print(v, textbox.x, textbox.y + ((i - 1) * 15))
+    end
 end
 
 function love.update(dt)
-    time = time + dt
+  -- UPDATE CAMERA
+  time = time + dt
 
-    -- UPDATE PEOPLE
-    for i, v in pairs(people) do
-        updatePerson(v, dt)
-    end
+  local ydiff = 0
+  local xdiff = 0
+  if keys.w then
+    ydiff = ydiff - 1
+  end
+
+  if keys.s then
+    ydiff = ydiff + 1
+  end
+
+  if keys.a then
+    xdiff = xdiff - 1
+  end
+
+  if keys.d then
+    xdiff = xdiff + 1
+  end
+
+  local camSpeed = 5
+  camera_x = camera_x + xdiff * camSpeed
+  camera_y = camera_y + ydiff * camSpeed
+
+  -- UPDATE PEOPLE
+  for i, v in pairs(people) do
+    updatePerson(v, dt)
+  end
 end
 
 function love.keyreleased(key)
@@ -199,6 +235,12 @@ function love.keyreleased(key)
     elseif key == "space" then
         moveRoom(people[1], 2)
     end
+
+    keys[key] = false
+end
+
+function love.keypressed(key)
+  keys[key] = true
 end
 
 function love.load()

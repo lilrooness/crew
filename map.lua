@@ -14,8 +14,8 @@ local n = {}
 
 function m.randomWalk(steps)
 
-    local xpos = 0
-    local ypos = 0
+    local xpos = 200
+    local ypos = 300
 
     local xstep = 105
     local ystep = 105
