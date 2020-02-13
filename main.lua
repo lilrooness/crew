@@ -39,29 +39,29 @@ people = {}
 icons = {}
 
 function getIconQuad(x, y, w, h, image)
-    icon_quad = love.graphics.newQuad(x, y, w, h, image:getWidth(), image:getHeight())
+  icon_quad = love.graphics.newQuad(x, y, w, h, image:getWidth(), image:getHeight())
 end
 
 function createPerson(name, x, y)
-    return {
-        name = name,
-        stressLevel = 0,
-        x = x,
-        y = y,
-        lastUpdated = 0,
-        room = 1,
-        state = nil
-    }
+  return {
+    name = name,
+    stressLevel = 0,
+    x = x,
+    y = y,
+    lastUpdated = 0,
+    room = 1,
+    state = nil
+  }
 end
 
 function getConnectingDoor(room1, room2)
-    for i, v in pairs(map.doors) do
-        if (v.room1 == room1 and v.room2 == room2) or (v.room2 == room1 and v.room1 == room2) then
-            return i
-        end
+  for i, v in pairs(map.doors) do
+    if (v.room1 == room1 and v.room2 == room2) or (v.room2 == room1 and v.room1 == room2) then
+      return i
     end
+  end
 
-    return nil
+  return nil
 end
 
 function openDoor(person, door_id)
