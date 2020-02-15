@@ -8,7 +8,7 @@ function m.create(person, room)
   }
 end
 
-function m.playerMenu(gameState, personId)
+function m.personMenu(gameState, personId)
   local roomId = gameState.people[personId].room
   local room = gameState.map.rooms[roomId]
 
@@ -24,14 +24,17 @@ function m.playerMenu(gameState, personId)
   for i, v in pairs(doorIds) do
     if gameState.map.doors[v].isOpen then
       options["close door "..v] = function()
-        n.openDoor(gameState.people[personId], v, gameState)
+        n.closeDoor(gameState.people[personId], v, gameState)
+        options.exit()
       end
       options["move through "..v] = function()
         n.moveRoom(gameState.people[personId], n.getOpposingRoomId(v, roomId, gameState), gameState)
+        options.exit()
       end
     else
       options["open door "..v] = function()
-        n.closeDoor(gameState.people[personId], v, gameState)
+        n.openDoor(gameState.people[personId], v, gameState)
+        options.exit()
       end
     end
   end
@@ -40,6 +43,58 @@ function m.playerMenu(gameState, personId)
     options = options,
     selected = "exit"
   }
+end
+
+function m.selectPreviousOption(menu)
+  local selectedOptionNumber = 1
+  for i, v in pairs(menu.options) do
+    if menu.selected == i then
+      break
+    end
+
+    selectedOptionNumber = selectedOptionNumber + 1
+  end
+
+  newSelection = selectedOptionNumber
+  if selectedOptionNumber > 1 then
+    newSelection = selectedOptionNumber - 1
+  end
+
+  local count = 1
+  for i, v in pairs(menu.options) do
+    if  count == newSelection then
+      menu.selected = i
+      break;
+    end
+
+    count = count + 1
+  end
+end
+
+function m.selectNextOption(menu)
+  local selectedOptionNumber = 1
+  for i, v in pairs(menu.options) do
+    if menu.selected == i then
+      break
+    end
+
+    selectedOptionNumber = selectedOptionNumber + 1
+  end
+
+  newSelection = selectedOptionNumber
+  if selectedOptionNumber < n.countOptions(menu.options) then
+    newSelection = selectedOptionNumber + 1
+  end
+
+  local count = 1
+  for i, v in pairs(menu.options) do
+    if  count == newSelection then
+      menu.selected = i
+      break;
+    end
+
+    count = count + 1
+  end
 end
 
 function m.renderMenu(menu)
@@ -133,7 +188,7 @@ function n.closeDoor(person, door_id, gameState)
 end
 
 function n.moveRoom(person, room_id, gameState)
-  if gameState.map.doors[getConnectingDoor(person.room, room_id)].isOpen then
+  if gameState.map.doors[n.getConnectingDoor(person.room, room_id, gameState)].isOpen then
     local ticksLeft = 3
     person.state = function(dt)
       local done = ticksLeft < 1

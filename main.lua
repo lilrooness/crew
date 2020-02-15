@@ -62,71 +62,15 @@ function createPerson(name, x, y)
   }
 end
 
-function getConnectingDoor(room1, room2)
-  for i, v in pairs(gameState.map.doors) do
-    if (v.room1 == room1 and v.room2 == room2) or (v.room2 == room1 and v.room1 == room2) then
-      return i
-    end
-  end
-
-  return nil
-end
-
-function openDoor(person, door_id)
-    if person.state == nil and not gameState.map.doors[door_id].isOpen then
-        local ticksLeft = 10
-        speak(person.name, radio.door.calm_door_open(door_id))
-        person.state = function(dt)
-            local done = ticksLeft < 1 or gameState.map.doors[door_id].isOpen -- door may have been opened by someone else
-
-            ticksLeft = ticksLeft - 1
-
-            if done then
-              gameState.map.doors[door_id].isOpen = true
-              speak(person.name, radio.door.calm_door_opened(door_id))
-            end
-
-            return done
-        end
-    end
-end
-
-function closeDoor(person, door_id)
-    if person.state == nil and gameState.map.doors[door_id].isOpen then
-        local ticksLeft = 10
-        speak(person.name, radio.door.calm_door_close(door_id))
-        person.state = function(dt)
-            local done = ticksLeft < 1 or (not gameState.map.doors[door_id].isOpen) -- door may have been closed by someone else
-
-            ticksLeft = ticksLeft - 1
-
-            if done then
-                gameState.map.doors[door_id].isOpen = false
-                speak(person.name, radio.door.calm_door_closed(door_id))
-            end
-
-            return done
-        end
-    end
-end
-
-function moveRoom(person, room_id)
-    if gameState.map.doors[getConnectingDoor(person.room, room_id)].isOpen then
-        local ticksLeft = 3
-        person.state = function(dt)
-            local done = ticksLeft < 1
-
-            ticksLeft = ticksLeft - dt
-
-            if done then
-              person.room = room_id
-              gameState.map.rooms[room_id].isVisible = true
-            end
-
-            return done
-        end
-    end
-end
+--function getConnectingDoor(room1, room2)
+--  for i, v in pairs(gameState.map.doors) do
+--    if (v.room1 == room1 and v.room2 == room2) or (v.room2 == room1 and v.room1 == room2) then
+--      return i
+--    end
+--  end
+--
+--  return nil
+--end
 
 function updatePerson(person, dt)
     if not (person.state == nil) then
@@ -235,7 +179,7 @@ function love.update(dt)
 
     if keys.m then
       gameState.gameMode = gameModes.PERSON_MENU
-      gameState.currentMenu = personMenu.playerMenu(gameState, 1)
+      gameState.currentMenu = personMenu.personMenu(gameState, 1)
     end
 
     local camSpeed = 5
@@ -245,9 +189,18 @@ function love.update(dt)
   elseif gameState.gameMode == gameModes.PERSON_MENU then
     if keys["return"] then
       keys["return"] = false
-      print(gameState.currentMenu.selected)
       gameState.currentMenu.options[gameState.currentMenu.selected]()
 
+    end
+
+    if keys["up"] then
+      keys["up"] = false
+      personMenu.selectPreviousOption(gameState.currentMenu)
+    end
+
+    if keys["down"] then
+      keys["down"] = false
+      personMenu.selectNextOption(gameState.currentMenu)
     end
   end
 
@@ -258,12 +211,6 @@ function love.update(dt)
 end
 
 function love.keyreleased(key)
-    --if key == "return" then
-    --    openDoor(gameState.people[1], 1)
-    --elseif key == "space" then
-    --    moveRoom(gameState.people[1], 2)
-    --end
-    --
     keys[key] = false
 end
 
