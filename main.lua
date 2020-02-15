@@ -1,5 +1,6 @@
 radio = require "radio"
 local map = require "map"
+local personMenu = require"person_menu"
 
 keys = {
   w = false,
@@ -40,7 +41,8 @@ local gameState = {
   camera_x = 0,
   camera_y = 0,
   map = map,
-  people = {}
+  people = {},
+  currentMenu = nil
 }
 
 function getIconQuad(x, y, w, h, image)
@@ -201,6 +203,10 @@ function love.draw()
     for i, v in pairs(gameState.sentences) do
       love.graphics.print(v, textbox.x, textbox.y + ((i - 1) * 15))
     end
+
+    if gameState.gameMode == gameModes.PERSON_MENU and gameState.currentMenu ~= nil then
+      personMenu.renderMenu(gameState.currentMenu)
+    end
 end
 
 function love.update(dt)
@@ -227,9 +233,22 @@ function love.update(dt)
       xdiff = xdiff + 1
     end
 
+    if keys.m then
+      gameState.gameMode = gameModes.PERSON_MENU
+      gameState.currentMenu = personMenu.playerMenu(gameState, 1)
+    end
+
     local camSpeed = 5
     gameState.camera_x = gameState.camera_x + xdiff * camSpeed
     gameState.camera_y = gameState.camera_y + ydiff * camSpeed
+
+  elseif gameState.gameMode == gameModes.PERSON_MENU then
+    if keys["return"] then
+      keys["return"] = false
+      print(gameState.currentMenu.selected)
+      gameState.currentMenu.options[gameState.currentMenu.selected]()
+
+    end
   end
 
   -- UPDATE PEOPLE
@@ -239,12 +258,12 @@ function love.update(dt)
 end
 
 function love.keyreleased(key)
-    if key == "return" then
-        openDoor(gameState.people[1], 1)
-    elseif key == "space" then
-        moveRoom(gameState.people[1], 2)
-    end
-
+    --if key == "return" then
+    --    openDoor(gameState.people[1], 1)
+    --elseif key == "space" then
+    --    moveRoom(gameState.people[1], 2)
+    --end
+    --
     keys[key] = false
 end
 
