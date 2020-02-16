@@ -1,5 +1,7 @@
 # Crew
 
+![screenshot](https://raw.githubusercontent.com/lilrooness/crew/master/screenshot.png)
+
 ## LOOT 
 
 - O2 Tanks
