@@ -1,3 +1,5 @@
+local mapUtils = require("map_utils")
+
 m = {}
 n = {}
 
@@ -12,7 +14,7 @@ function m.personMenu(gameState, personId)
   local roomId = gameState.people[personId].room
   local room = gameState.map.rooms[roomId]
 
-  local doorIds = n.getDoorsForRoom(gameState, roomId)
+  local doorIds = mapUtils.getDoorsForRoom(gameState, roomId)
 
   options = {
     exit = function()
@@ -28,7 +30,7 @@ function m.personMenu(gameState, personId)
         options.exit()
       end
       options["move through "..v] = function()
-        n.moveRoom(gameState.people[personId], n.getOpposingRoomId(v, roomId, gameState), gameState)
+        n.moveRoom(gameState.people[personId], mapUtils.getOpposingRoomId(v, roomId, gameState), gameState)
         options.exit()
       end
     else
@@ -120,35 +122,13 @@ function m.renderMenu(menu)
 end
 
 function n.countOptions(options)
+
   local count = 0
   for i, v in pairs(options) do
     count = count + 1
   end
 
   return count
-end
-
-function n.getOpposingRoomId(doorId, currentRoomId, gameState)
-  if gameState.map.doors[doorId].room1 == currentRoomId then
-    return gameState.map.doors[doorId].room2
-  elseif gameState.map.doors[doorId].room2 == currentRoomId then
-    return gameState.map.doors[doorId].room1
-  end
-
-  print("ERROR - COULD NOT GET ROOM OPPOSING ROOM: "..cuurentRoomId..". NOT CONNECTED TO DOOR: "..doorId)
-  return nil
-end
-
-function n.getDoorsForRoom(gameState, roomId)
-  local doorIds = {}
-
-  for i, v in pairs(gameState.map.doors) do
-    if v.room1 == roomId or v.room2 == roomId then
-      table.insert(doorIds, i)
-    end
-  end
-
-  return doorIds
 end
 
 function n.openDoor(person, door_id, gameState)
@@ -163,6 +143,8 @@ function n.openDoor(person, door_id, gameState)
       if done then
         gameState.map.doors[door_id].isOpen = true
         radio.speak(person.name, lines.door.calm_door_opened(door_id))
+        person.oxygen = person.oxygen - (math.random(4) + 4)
+
       end
 
       return done
@@ -182,6 +164,7 @@ function n.closeDoor(person, door_id, gameState)
       if done then
         gameState.map.doors[door_id].isOpen = false
         radio.speak(person.name, lines.door.calm_door_closed(door_id))
+        person.oxygen = person.oxygen - (math.random(4) + 4)
       end
 
       return done
@@ -190,7 +173,7 @@ function n.closeDoor(person, door_id, gameState)
 end
 
 function n.moveRoom(person, room_id, gameState)
-  if gameState.map.doors[n.getConnectingDoor(person.room, room_id, gameState)].isOpen then
+  if gameState.map.doors[mapUtils.getConnectingDoor(person.room, room_id, gameState)].isOpen then
     local ticksLeft = 3
     person.state = function(dt)
       local done = ticksLeft < 1
@@ -200,8 +183,6 @@ function n.moveRoom(person, room_id, gameState)
       if done then
         person.room = room_id
         gameState.map.rooms[room_id].isVisible = true
-        -- oxygen goes down by 4 - 8 percent when you go through
-        -- a door
         person.oxygen = person.oxygen - (math.random(4) + 4)
       end
 
@@ -209,16 +190,5 @@ function n.moveRoom(person, room_id, gameState)
     end
   end
 end
-
-function n.getConnectingDoor(room1, room2, gameState)
-  for i, v in pairs(gameState.map.doors) do
-    if (v.room1 == room1 and v.room2 == room2) or (v.room2 == room1 and v.room1 == room2) then
-      return i
-    end
-  end
-
-  return nil
-end
-
 
 return m

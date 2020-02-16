@@ -2,6 +2,9 @@
 
 ![screenshot](https://raw.githubusercontent.com/lilrooness/crew/master/screenshot.png)
 
+## Working On
+Loot
+
 ## LOOT 
 
 - O2 Tanks

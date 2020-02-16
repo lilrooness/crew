@@ -62,19 +62,20 @@ end
 
 
 function n.createRoom(x, y, w, h)
-    local warning = nil
-    if math.random(100) > 50 then
-        warning = "hazard"
-    end
-    return {
-        isVisible = false,
-        x = x,
-        y = y,
-        w = w,
-        h = h,
-        type = m.room_types[math.random(#m.room_types)],
-        warning = warning
-    }
+  local warning = nil
+  if math.random(100) > 50 then
+    warning = "hazard"
+  end
+  return {
+    isVisible = false,
+    outlineVisible = false,
+    x = x,
+    y = y,
+    w = w,
+    h = h,
+    type = m.room_types[math.random(#m.room_types)],
+    warning = warning
+  }
 end
 
 function n.addDoor(room1, room2, isOpen)

@@ -1,7 +1,8 @@
 radio = require "radio"
 lines = require "lines"
 local map = require "map"
-local personMenu = require"person_menu"
+local personMenu = require "person_menu"
+local items = require "items"
 
 keys = {
   w = false,
@@ -26,14 +27,14 @@ gameModes = {
   PERSON_MENU = 2
 }
 
-items = {
-  plasmaCutter = "Plasma Cutter",
-  doorInterface = "Door Interface",
-  roomInterface = "Room Interface",
-  oxygenTank = "Oxygen Tank",
-  t1Scanner = "T1 Scanner",
-  t1PowerSource = "T1 Power Source"
-}
+--items = {
+--  plasmaCutter = "Plasma Cutter",
+--  doorInterface = "Door Interface",
+--  roomInterface = "Room Interface",
+--  oxygenTank = "Oxygen Tank",
+--  t1Scanner = "T1 Scanner",
+--  t1PowerSource = "T1 Power Source"
+--}
 
 local gameState = {
   sentences = {},
@@ -64,14 +65,21 @@ function createPerson(name, x, y)
   }
 end
 
-function updatePerson(person, dt)
-    if not (person.state == nil) then
-        done = person.state(dt)
+function updatePerson(personId, dt, gameState)
+  local person = gameState.people[personId]
+  if not (person.state == nil) then
+    done = person.state(dt)
 
-        if done then
-            person.state = nil
-        end
+    if done then
+      person.state = nil
     end
+  end
+
+  for i, v in pairs(person.items) do
+    if v.passive ~= nil then
+      v.passive(dt, personId, gameState)
+    end
+  end
 end
 
 function shiftTextUp()
@@ -81,10 +89,9 @@ end
 function love.draw()
 
     -- ROOMS
-    love.graphics.setColor(1, 1, 1)
     for i, v in pairs(gameState.map.rooms) do
-
       if v.isVisible then
+        love.graphics.setColor(1, 1, 1)
         love.graphics.rectangle("line", v.x-gameState.camera_x, v.y-gameState.camera_y, v.w, v.h)
         icon_x = (v.x + v.w / 3) - gameState.camera_x
         icon_y = v.y + 3 - gameState.camera_y
@@ -92,13 +99,18 @@ function love.draw()
           if v.warning then
             love.graphics.draw(icons[v.warning], icon_x, icon_y, 0, 0.05, 0.05)
           end
-        end
+      elseif v.outlineVisible then
+        love.graphics.setColor(0.5, 0.5, 0.5)
+        love.graphics.rectangle("line", v.x-gameState.camera_x, v.y-gameState.camera_y, v.w, v.h)
+      end
     end
 
     -- map.DOORS
     love.graphics.setColor(1, 0, 0)
     for i, v in pairs(gameState.map.doors) do
-      if gameState.map.rooms[v.room1].isVisible or gameState.map.rooms[v.room2].isVisible then
+      local room1 = gameState.map.rooms[v.room1]
+      local room2 = gameState.map.rooms[v.room2]
+      if room1.isVisible or room2.isVisible or room1.outlineVisible or room2.outlineVisible then
         -- position the doors between the rooms midpoints
         local x = ((gameState.map.rooms[v.room1].x + gameState.map.rooms[v.room1].w / 2) + (gameState.map.rooms[v.room2].x + gameState.map.rooms[v.room2].w / 2)) / 2
         local y = ((gameState.map.rooms[v.room1].y + gameState.map.rooms[v.room1].h / 2) + (gameState.map.rooms[v.room2].y + gameState.map.rooms[v.room2].h / 2)) / 2
@@ -194,7 +206,7 @@ function love.update(dt)
 
   -- UPDATE PEOPLE
   for i, v in pairs(gameState.people) do
-    updatePerson(v, dt)
+    updatePerson(i, dt, gameState)
   end
 end
 
@@ -216,9 +228,10 @@ function love.load()
     table.insert(gameState.people, createPerson("Emily", 50, 50))
     table.insert(gameState.people, createPerson("David", 50, 50))
 
-    table.insert(gameState.people[1].items, items.plasmaCutter)
+--    table.insert(gameState.people[1].items, items.plasmaCutter)
+--    table.insert(gameState.people[1].items, items.t1Scanner)
+    --    table.insert(gameState.people[2].items, items.t1PowerSource)
     table.insert(gameState.people[1].items, items.t1Scanner)
-    table.insert(gameState.people[2].items, items.t1PowerSource)
 
     -- create map
     map.randomWalk(50)
