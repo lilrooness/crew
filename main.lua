@@ -62,16 +62,6 @@ function createPerson(name, x, y)
   }
 end
 
---function getConnectingDoor(room1, room2)
---  for i, v in pairs(gameState.map.doors) do
---    if (v.room1 == room1 and v.room2 == room2) or (v.room2 == room1 and v.room1 == room2) then
---      return i
---    end
---  end
---
---  return nil
---end
-
 function updatePerson(person, dt)
     if not (person.state == nil) then
         done = person.state(dt)
@@ -99,11 +89,12 @@ function love.draw()
     -- ROOMS
     love.graphics.setColor(1, 1, 1)
     for i, v in pairs(gameState.map.rooms) do
+
+      if v.isVisible then
         love.graphics.rectangle("line", v.x-gameState.camera_x, v.y-gameState.camera_y, v.w, v.h)
         icon_x = (v.x + v.w / 3) - gameState.camera_x
         icon_y = v.y + 3 - gameState.camera_y
-        if v.isVisible then
-          love.graphics.draw(icons[v.type], icon_x, icon_y, 0, 0.05, 0.05)
+        love.graphics.draw(icons[v.type], icon_x, icon_y, 0, 0.05, 0.05)
           if v.warning then
             love.graphics.draw(icons[v.warning], icon_x, icon_y, 0, 0.05, 0.05)
           end
@@ -113,14 +104,16 @@ function love.draw()
     -- map.DOORS
     love.graphics.setColor(1, 0, 0)
     for i, v in pairs(gameState.map.doors) do
+      if gameState.map.rooms[v.room1].isVisible or gameState.map.rooms[v.room2].isVisible then
         -- position the doors between the rooms midpoints
         local x = ((gameState.map.rooms[v.room1].x + gameState.map.rooms[v.room1].w / 2) + (gameState.map.rooms[v.room2].x + gameState.map.rooms[v.room2].w / 2)) / 2
         local y = ((gameState.map.rooms[v.room1].y + gameState.map.rooms[v.room1].h / 2) + (gameState.map.rooms[v.room2].y + gameState.map.rooms[v.room2].h / 2)) / 2
         local mode = "fill"
         if v.isOpen then
-            mode = "line"
+          mode = "line"
         end
         love.graphics.rectangle(mode, x-gameState.camera_x, y-gameState.camera_y, 10, 10)
+      end
     end
 
     -- PEOPLE
