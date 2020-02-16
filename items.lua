@@ -6,9 +6,15 @@ local n = {}
 m.t1Scanner = {
   name = "T1 Scanner"
 }
+m.t1Scanner.__index = m.t1Scanner
+function m.t1Scanner.new()
+  local o = setmetatable({}, m.t1Scanner)
+  o.name = m.t1Scanner.name
+  return o
+end
 
 -- illuminate rooms round current room
-m.t1Scanner.passive = function(dt, personId, gameState)
+function m.t1Scanner:passive(dt, personId, gameState)
   local currentRoomId = gameState.people[personId].room
   local currentRoom = gameState.map.rooms[currentRoomId]
 
@@ -25,6 +31,25 @@ m.t1Scanner.passive = function(dt, personId, gameState)
       v.outlineVisible = true
     end
   end
+end
+
+m.o2Tank = {
+  name = "O2 Tank",
+  content = 0
+}
+m.o2Tank.__index = m.o2Tank
+function m.o2Tank.new(content)
+  local o = setmetatable({}, m.o2Tank)
+  o.name = m.o2Tank.name
+  o.content = content
+  return o
+end
+
+function m.o2Tank:active(personId, gameState)
+  local space = 100 - gameState.people[personId].oxygen
+  local amountToRefil = math.max(space, self.content)
+  self.content = self.content - amountToRefil
+  gameState.people[personId].oxygen = gameState.people[personId].oxygen + amountToRefil
 end
 
 return m

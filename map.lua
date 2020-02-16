@@ -1,3 +1,5 @@
+local items = require "items"
+
 local m = {
     rooms = {},
     doors = {},
@@ -66,7 +68,13 @@ function n.createRoom(x, y, w, h)
   if math.random(100) > 50 then
     warning = "hazard"
   end
+
+  local roomItems = {}
+  if  math.random(100) > 75 then
+    roomItems = {[1] = items.t1Scanner.new()}
+  end
   return {
+    items = roomItems,
     isVisible = false,
     outlineVisible = false,
     x = x,

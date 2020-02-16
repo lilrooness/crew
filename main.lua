@@ -77,7 +77,7 @@ function updatePerson(personId, dt, gameState)
 
   for i, v in pairs(person.items) do
     if v.passive ~= nil then
-      v.passive(dt, personId, gameState)
+      v:passive(dt, personId, gameState)
     end
   end
 end
@@ -96,9 +96,13 @@ function love.draw()
         icon_x = (v.x + v.w / 3) - gameState.camera_x
         icon_y = v.y + 3 - gameState.camera_y
         love.graphics.draw(icons[v.type], icon_x, icon_y, 0, 0.05, 0.05)
-          if v.warning then
-            love.graphics.draw(icons[v.warning], icon_x, icon_y, 0, 0.05, 0.05)
-          end
+        if v.warning then
+          love.graphics.draw(icons[v.warning], icon_x, icon_y, 0, 0.05, 0.05)
+        end
+
+        if #(v.items) > 0 then
+          love.graphics.draw(icons["items"], icon_x, icon_y+50, 0, 1, 1)
+        end
       elseif v.outlineVisible then
         love.graphics.setColor(0.5, 0.5, 0.5)
         love.graphics.rectangle("line", v.x-gameState.camera_x, v.y-gameState.camera_y, v.w, v.h)
@@ -231,7 +235,7 @@ function love.load()
 --    table.insert(gameState.people[1].items, items.plasmaCutter)
 --    table.insert(gameState.people[1].items, items.t1Scanner)
     --    table.insert(gameState.people[2].items, items.t1PowerSource)
-    table.insert(gameState.people[1].items, items.t1Scanner)
+    table.insert(gameState.people[1].items, items.t1Scanner.new())
 
     -- create map
     map.randomWalk(50)
@@ -243,6 +247,7 @@ function love.load()
     icons["person"] = love.graphics.newImage("img/person-glow.png")
     icons["hazard"] = love.graphics.newImage("img/hazard-sign.png")
     icons["radioactive"] = love.graphics.newImage("img/radioactive.png")
+    icons["items"] = love.graphics.newImage("img/info.png")
 
     radio.registerCallback(function(name, text)
         if table.getn(gameState.sentences) > 4 then
