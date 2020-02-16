@@ -39,6 +39,8 @@ function m.personMenu(gameState, personId)
     end
   end
 
+  
+
   return {
     options = options,
     selected = "exit"
@@ -152,7 +154,7 @@ end
 function n.openDoor(person, door_id, gameState)
   if person.state == nil and not gameState.map.doors[door_id].isOpen then
     local ticksLeft = 10
---    speak(person.name, radio.door.calm_door_open(door_id))
+    radio.speak(person.name, lines.door.calm_door_open(door_id))
     person.state = function(dt)
       local done = ticksLeft < 1 or gameState.map.doors[door_id].isOpen -- door may have been opened by someone else
 
@@ -160,7 +162,7 @@ function n.openDoor(person, door_id, gameState)
 
       if done then
         gameState.map.doors[door_id].isOpen = true
---        speak(person.name, radio.door.calm_door_opened(door_id))
+        radio.speak(person.name, lines.door.calm_door_opened(door_id))
       end
 
       return done
@@ -171,7 +173,7 @@ end
 function n.closeDoor(person, door_id, gameState)
   if person.state == nil and gameState.map.doors[door_id].isOpen then
     local ticksLeft = 10
---    speak(person.name, radio.door.calm_door_close(door_id))
+    radio.speak(person.name, lines.door.calm_door_close(door_id))
     person.state = function(dt)
       local done = ticksLeft < 1 or (not gameState.map.doors[door_id].isOpen) -- door may have been closed by someone else
 
@@ -179,7 +181,7 @@ function n.closeDoor(person, door_id, gameState)
 
       if done then
         gameState.map.doors[door_id].isOpen = false
-        --speak(person.name, radio.door.calm_door_closed(door_id))
+        radio.speak(person.name, lines.door.calm_door_closed(door_id))
       end
 
       return done
@@ -198,6 +200,9 @@ function n.moveRoom(person, room_id, gameState)
       if done then
         person.room = room_id
         gameState.map.rooms[room_id].isVisible = true
+        -- oxygen goes down by 4 - 8 percent when you go through
+        -- a door
+        person.oxygen = person.oxygen - (math.random(4) + 4)
       end
 
       return done

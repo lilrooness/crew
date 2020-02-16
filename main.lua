@@ -1,4 +1,5 @@
 radio = require "radio"
+lines = require "lines"
 local map = require "map"
 local personMenu = require"person_menu"
 
@@ -51,6 +52,7 @@ end
 
 function createPerson(name, x, y)
   return {
+    oxygen = 100,
     items = {},
     name = name,
     stressLevel = 0,
@@ -74,14 +76,6 @@ end
 
 function shiftTextUp()
     table.remove(gameState.sentences, 1)
-end
-
-function speak(name, text)
-    if table.getn(gameState.sentences) > 4 then
-        table.remove(gameState.sentences, 1)
-    end
-
-    table.insert(gameState.sentences, name .. ": " .. text)
 end
 
 function love.draw()
@@ -129,6 +123,7 @@ function love.draw()
     for i, v in pairs(gameState.people) do
         love.graphics.draw(icons.person, 600, 50 * i, 0, 0.06, 0.06)
         love.graphics.print("[" .. i .. "] - " .. v.name, 630, 50 * i)
+        love.graphics.print("O2. "..v.oxygen .. "%", 630, i*50 + 15)
     end
 
     -- TEXTBOX
@@ -235,4 +230,12 @@ function love.load()
     icons["person"] = love.graphics.newImage("img/person-glow.png")
     icons["hazard"] = love.graphics.newImage("img/hazard-sign.png")
     icons["radioactive"] = love.graphics.newImage("img/radioactive.png")
+
+    radio.registerCallback(function(name, text)
+        if table.getn(gameState.sentences) > 4 then
+          table.remove(gameState.sentences, 1)
+        end
+
+        table.insert(gameState.sentences, name .. ": " .. text)
+    end)
 end
