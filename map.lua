@@ -71,8 +71,11 @@ function n.createRoom(x, y, w, h)
 
   local roomItems = {}
   if  math.random(100) > 75 then
-    roomItems = {[1] = items.t1Scanner.new()}
+    roomItems = {items[items.itemNames[math.random(#items.itemNames)]]}
   end
+
+--  roomItems = {items.t1Scanner.new()}
+
   return {
     items = roomItems,
     isVisible = false,
@@ -82,7 +85,7 @@ function n.createRoom(x, y, w, h)
     w = w,
     h = h,
     type = m.room_types[math.random(#m.room_types)],
-    warning = warning
+    warning = warning,
   }
 end
 

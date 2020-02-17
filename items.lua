@@ -3,6 +3,11 @@ local mapUtils = require("map_utils")
 local m = {}
 local n = {}
 
+m.itemNames = {
+  "t1Scanner",
+  "o2Tank"
+}
+
 m.t1Scanner = {
   name = "T1 Scanner"
 }

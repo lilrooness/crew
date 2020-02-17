@@ -1,4 +1,6 @@
 local mapUtils = require("map_utils")
+local roomLootMenu = require("room_loot_menu")
+
 
 m = {}
 n = {}
@@ -22,6 +24,12 @@ function m.personMenu(gameState, personId)
       gameState.gameMode = 1
     end
   }
+
+  if #(room.items) > 0 then
+    options.scavenge = function()
+      gameState.currentMenu = roomLootMenu.roomLootMenu(gameState, personId, roomId)
+    end
+  end
 
   for i, v in pairs(gameState.people[personId].items) do
     if v.active ~= nil then
@@ -49,8 +57,6 @@ function m.personMenu(gameState, personId)
       end
     end
   end
-
-  
 
   return {
     options = options,

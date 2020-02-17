@@ -24,7 +24,7 @@ icons = {}
 
 gameModes = {
   MAP = 1,
-  PERSON_MENU = 2
+  PERSON_MENU = 2,
 }
 
 local gameState = {
@@ -45,7 +45,7 @@ end
 function createPerson(name, x, y)
   return {
     oxygen = 100,
-    items = {items.o2Tank.new()},
+    items = {},
     name = name,
     stressLevel = 0,
     x = x,
@@ -225,7 +225,7 @@ function love.load()
 
 --    table.insert(gameState.people[1].items, items.plasmaCutter)
 --    table.insert(gameState.people[1].items, items.t1Scanner)
-    --    table.insert(gameState.people[2].items, items.t1PowerSource)
+--    table.insert(gameState.people[2].items, items.t1PowerSource)
     table.insert(gameState.people[1].items, items.t1Scanner.new())
 
     -- create map
@@ -239,6 +239,9 @@ function love.load()
     icons["hazard"] = love.graphics.newImage("img/hazard-sign.png")
     icons["radioactive"] = love.graphics.newImage("img/radioactive.png")
     icons["items"] = love.graphics.newImage("img/info.png")
+    icons["defence-off"] = love.graphics.newImage("img/sentry-gun-off.png")
+    icons["defence-on"] = love.graphics.newImage("img/sentry-gun-on.png")
+
 
     radio.registerCallback(function(name, text)
         if table.getn(gameState.sentences) > 4 then
