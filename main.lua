@@ -54,7 +54,7 @@ end
 function createPerson(name, x, y)
   return {
     oxygen = 100,
-    items = {},
+    items = {items.o2Tank.new()},
     name = name,
     stressLevel = 0,
     x = x,

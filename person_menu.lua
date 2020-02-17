@@ -23,6 +23,15 @@ function m.personMenu(gameState, personId)
     end
   }
 
+  for i, v in pairs(gameState.people[personId].items) do
+    if v.active ~= nil then
+      options[v.name] = function()
+        v:active(personId, gameState)
+        options.exit()
+      end
+    end
+  end
+
   for i, v in pairs(doorIds) do
     if gameState.map.doors[v].isOpen then
       options["close door "..v] = function()
