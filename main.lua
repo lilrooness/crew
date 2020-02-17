@@ -27,15 +27,6 @@ gameModes = {
   PERSON_MENU = 2
 }
 
---items = {
---  plasmaCutter = "Plasma Cutter",
---  doorInterface = "Door Interface",
---  roomInterface = "Room Interface",
---  oxygenTank = "Oxygen Tank",
---  t1Scanner = "T1 Scanner",
---  t1PowerSource = "T1 Power Source"
---}
-
 local gameState = {
   sentences = {},
   gameMode = 1,
