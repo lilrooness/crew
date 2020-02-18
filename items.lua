@@ -50,7 +50,7 @@ m.o2Tank.__index = m.o2Tank
 function m.o2Tank.new(content)
   local o = setmetatable({}, m.o2Tank)
   o.name = m.o2Tank.name
-  o.content = content
+  o.content = math.random(100)
   return o
 end
 
@@ -60,7 +60,7 @@ end
 
 function m.o2Tank:active(personId, gameState)
   local space = 100 - gameState.people[personId].oxygen
-  local amountToRefil = math.max(space, self.content)
+  local amountToRefil = math.min(space, self.content)
   self.content = self.content - amountToRefil
   gameState.people[personId].oxygen = gameState.people[personId].oxygen + amountToRefil
 end
