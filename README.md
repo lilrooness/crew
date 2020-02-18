@@ -3,6 +3,7 @@
 ![screenshot](https://raw.githubusercontent.com/lilrooness/crew/master/screenshot.png)
 
 ## Ideas
+- crew member uniqueness through backpack utility and augentation possibilities
 
 - Spin, if the wreck spins, gravity can increase on the ship - maybe, when docking with bigger ships,
   you need to spend more fuel to decrease the risk of entering a spin. Spinning makes moving require more oxygen.
