@@ -71,7 +71,7 @@ function n.createRoom(x, y, w, h)
 
   local roomItems = {}
   if  math.random(100) > 75 then
-    roomItems = {items[items.itemNames[math.random(#items.itemNames)]]}
+    roomItems = {items[items.itemNames[math.random(#items.itemNames)]].new()}
   end
 
 --  roomItems = {items.t1Scanner.new()}

@@ -13,7 +13,8 @@ function m.roomLootMenu(gameState, personId, roomId)
   }
 
   for i, v in pairs(room.items) do
-    options[v.name] = function()
+    local label = tostring(v)
+    options[label] = function()
       table.insert(person.items, v)
       room.items[i] = nil
       gameState.currentMenu = m.roomLootMenu(gameState, personId, roomId)

@@ -33,7 +33,8 @@ function m.personMenu(gameState, personId)
 
   for i, v in pairs(gameState.people[personId].items) do
     if v.active ~= nil then
-      options[v.name] = function()
+      local label = tostring(v)
+      options[label] = function()
         v:active(personId, gameState)
         options.exit()
       end

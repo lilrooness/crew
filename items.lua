@@ -18,6 +18,10 @@ function m.t1Scanner.new()
   return o
 end
 
+function m.t1Scanner:__tostring()
+  return self.name
+end
+
 -- illuminate rooms round current room
 function m.t1Scanner:passive(dt, personId, gameState)
   local currentRoomId = gameState.people[personId].room
@@ -48,6 +52,10 @@ function m.o2Tank.new(content)
   o.name = m.o2Tank.name
   o.content = content
   return o
+end
+
+function m.o2Tank:__tostring()
+  return self.name..": "..self.content.."%"
 end
 
 function m.o2Tank:active(personId, gameState)
