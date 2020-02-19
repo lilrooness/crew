@@ -3,7 +3,11 @@
 ![screenshot](https://raw.githubusercontent.com/lilrooness/crew/master/screenshot.png)
 
 ## Ideas
-- crew member uniqueness through backpack utility and augentation possibilities
+- The goal is to extract a thing from each ship. The ruel rods are usually deep inside the ship and the game is about finding the way to them while also planning your route out.
+
+- Pointer in the direction of the room with the fuel rods.
+
+- Crew member uniqueness through backpack utility and augentation possibilities
 
 - Spin, if the wreck spins, gravity can increase on the ship - maybe, when docking with bigger ships,
   you need to spend more fuel to decrease the risk of entering a spin. Spinning makes moving require more oxygen.
