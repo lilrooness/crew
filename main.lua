@@ -3,7 +3,7 @@ lines = require "lines"
 local map = require "map"
 local personMenu = require "person_menu"
 local items = require "items"
-local slamRenderer = require "scanner"
+local planMode = require "plan_mode"
 
 keys = {
   w = false,
@@ -26,6 +26,7 @@ icons = {}
 gameModes = {
   MAP = 1,
   PERSON_MENU = 2,
+  PLAN = 3
 }
 
 local gameState = {
@@ -79,11 +80,9 @@ function shiftTextUp()
 end
 
 function love.draw()
-  slamRenderer.renderScan(gameState)
-end
 
---function love.draw()
---
+  planMode.renderPlanView(gameState)
+
 --    -- ROOMS
 --    for i, v in pairs(gameState.map.rooms) do
 --      if v.isVisible then
@@ -151,7 +150,7 @@ end
 --    if gameState.gameMode == gameModes.PERSON_MENU and gameState.currentMenu ~= nil then
 --      personMenu.renderMenu(gameState.currentMenu)
 --    end
---end
+end
 
 
 function love.update(dt)
@@ -229,14 +228,15 @@ function love.load()
     table.insert(gameState.people, createPerson("Emily", 50, 50))
     table.insert(gameState.people, createPerson("David", 50, 50))
 
+    planModeShader = love.graphics.newShader("shader.fs")
+
 --    table.insert(gameState.people[1].items, items.plasmaCutter)
 --    table.insert(gameState.people[1].items, items.t1Scanner)
 --    table.insert(gameState.people[2].items, items.t1PowerSource)
 --    table.insert(gameState.people[1].items, items.t1Scanner.new())
 
     -- create map
-    map.randomWalk(50)
-    slamRenderer.initScan(gameState)
+    map.randomWalk(500)
 
     icons["bridge"] = love.graphics.newImage("img/radar-sweep-glow.png")
     icons["weapons"] = love.graphics.newImage("img/heavy-bullets-glow.png")

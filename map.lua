@@ -11,7 +11,9 @@ local m = {
     }
 }
 
-local n = {}
+local n = {
+  goalRoomSet = false
+}
 
 
 function m.randomWalk(steps)
@@ -74,7 +76,14 @@ function n.createRoom(x, y, w, h)
     roomItems = {items[items.itemNames[math.random(#items.itemNames)]].new()}
   end
 
---  roomItems = {items.t1Scanner.new()}
+  --  roomItems = {items.t1Scanner.new()}
+
+  local isGoalRoom = false
+
+  if not n.goalRoomSet and math.random(100) > 10 then
+    isGoalRoom = true
+    n.goalRoomSet = true
+  end
 
   return {
     items = roomItems,
@@ -86,6 +95,7 @@ function n.createRoom(x, y, w, h)
     h = h,
     type = m.room_types[math.random(#m.room_types)],
     warning = warning,
+    goalRoom = isGoalRoom
   }
 end
 
