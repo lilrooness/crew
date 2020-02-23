@@ -1,69 +1,62 @@
 local items = require "items"
 
 local m = {
-    rooms = {},
-    doors = {},
-    room_types = {
-        "engines",
-        "cryo",
-        "bridge",
-        "weapons"
-    }
+  rooms = {},
+  doors = {},
+  room_types = {
+    "engines",
+    "cryo",
+    "bridge",
+    "weapons"
+  }
 }
 
 local n = {
   goalRoomSet = false
 }
 
-
 function m.randomWalk(steps)
+  local xpos = 200
+  local ypos = 300
 
-    local xpos = 200
-    local ypos = 300
+  local xstep = 105
+  local ystep = 105
 
-    local xstep = 105
-    local ystep = 105
+  local firstRoom = n.createRoom(xpos, ypos, xstep - 5, ystep - 5)
+  firstRoom.isVisible = true
+  firstRoom.warning = nil
+  table.insert(m.rooms, firstRoom)
+  local currentRoom = table.getn(m.rooms)
 
-    local firstRoom = n.createRoom(xpos, ypos, xstep-5, ystep-5)
-    firstRoom.isVisible = true
-    firstRoom.warning = nil
-    table.insert(m.rooms, firstRoom)
-    local currentRoom = table.getn(m.rooms)
+  -- we will check this map to see if we have collided with ourselves
+  local taken = {
+    [xpos .. ":" .. ypos] = currentRoom
+  }
 
-    -- we will check this map to see if we have collided with ourselves
-    local taken = {
-        [xpos..":"..ypos] = currentRoom
-    }
+  -- we can go up and down each axis
+  local options = {-1, 1}
 
-    -- we can go up and down each axis
-    local options = {-1, 1}
+  for i = 0, steps do
+    local direction = options[math.random(#options)]
 
-    for i=0, steps do
-
-        local direction = options[math.random(#options)]
-
-        if math.random(2) == 1 then
-            xpos = xpos + (xstep * direction)
-        else
-            ypos = ypos + (ystep * direction)
-        end
-
-
-        if taken[xpos..":"..ypos] == nil then
-            local room = n.createRoom(xpos, ypos, xstep-5, ystep-5)
-            table.insert(m.rooms, room)
-            newRoom = table.getn(m.rooms)
-            n.addDoor(currentRoom, newRoom, false)
-            taken[xpos..":"..ypos] = newRoom
-            currentRoom = newRoom
-
-        else
-            currentRoom = taken[xpos..":"..ypos]
-        end
+    if math.random(2) == 1 then
+      xpos = xpos + (xstep * direction)
+    else
+      ypos = ypos + (ystep * direction)
     end
 
+    if taken[xpos .. ":" .. ypos] == nil then
+      local room = n.createRoom(xpos, ypos, xstep - 5, ystep - 5)
+      table.insert(m.rooms, room)
+      newRoom = table.getn(m.rooms)
+      n.addDoor(currentRoom, newRoom, false)
+      taken[xpos .. ":" .. ypos] = newRoom
+      currentRoom = newRoom
+    else
+      currentRoom = taken[xpos .. ":" .. ypos]
+    end
+  end
 end
-
 
 function n.createRoom(x, y, w, h)
   local warning = nil
@@ -72,15 +65,13 @@ function n.createRoom(x, y, w, h)
   end
 
   local roomItems = {}
-  if  math.random(100) > 75 then
+  if math.random(100) > 75 then
     roomItems = {items[items.itemNames[math.random(#items.itemNames)]].new()}
   end
 
-  --  roomItems = {items.t1Scanner.new()}
-
   local isGoalRoom = false
 
-  if not n.goalRoomSet and math.random(100) > 10 then
+  if not n.goalRoomSet and math.random(100) > 98 then
     isGoalRoom = true
     n.goalRoomSet = true
   end
@@ -100,16 +91,16 @@ function n.createRoom(x, y, w, h)
 end
 
 function n.addDoor(room1, room2, isOpen)
-    local door = {
-        isOpen = isOpen,
-        room1 = room1,
-        room2 = room2
-    }
+  local door = {
+    isOpen = isOpen,
+    room1 = room1,
+    room2 = room2
+  }
 
-    table.insert(m.doors, door)
-    index = table.getn(m.doors)
+  table.insert(m.doors, door)
+  index = table.getn(m.doors)
 
-    return index
+  return index
 end
 
 return m
